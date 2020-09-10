@@ -5,119 +5,13 @@ import {Piece, ChessGame} from './Chess.js';
 import pieceImages from './images.js';
 
 
-class TestClass extends React.Component {
-	render() {
-		return (
-			<div>Ablong</div>
-		);
-	}
-}
+
 
 class Square extends React.Component {
 	render(){
 		return (
 			<img src={this.props.image} style={this.props.style} className="square" onClick = {() => this.props.onClick()} />
 		);
-	}
-}
-
-function hasWinner(squares) {
-  const lines = [
-    [0, 1, 2],
-    [3, 4, 5],
-    [6, 7, 8],
-    [0, 3, 6],
-    [1, 4, 7],
-    [2, 5, 8],
-    [0, 4, 8],
-    [2, 4, 6],
-  ];
-  for (let i = 0; i < lines.length; i++) {
-    const [a, b, c] = lines[i];
-    if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-      return true;
-    }
-  }
-  return false;
-}
-
-
-class Board extends React.Component {
-	
-	constructor(props){
-		super(props);
-		this.state = {
-			squares: Array(9).fill(null),
-			complete: false,
-			currentTurn: 0,
-			numTurns: 0,
-		}
-	}
-	
-	getPlayer(){
-		if (this.state.currentTurn == 0){
-			return "X";
-		}
-		return "O";
-	}
-	
-	handleClick(i){
-		if (this.state.complete || this.state.numTurns >= 9){
-			return;
-		}
-		const squares = this.state.squares.slice();
-		if (squares[i] != null){
-			return;
-		}
-		squares[i] = this.getPlayer();
-		if (hasWinner(squares)){
-			this.setState({complete: true});
-		} else {
-			this.setState({currentTurn: (this.state.currentTurn+1)%2, numTurns: this.state.numTurns + 1});
-		}
-		this.setState({squares: squares});
-	}
-	
-	renderSquare(i){
-		return <Square 
-			value={this.state.squares[i]}
-			onClick = {() => this.handleClick(i)}
-		/>;
-	}
-	
-	render(){
-    let currentStatus = '';
-	let controllingPlayer = this.getPlayer();
-	if (this.state.complete){
-		currentStatus = "Game over! " + controllingPlayer + " wins";
-	} else if (this.state.numTurns >= 9){
-		currentStatus = "Game over! Tie!";
-	} else if (this.state.currentTurn == 0){
-		currentStatus = "Next turn: X";
-	} else {
-		currentStatus = "Next turn: O";
-	}
-
-    return (
-      <div>
-        <div className="status">{currentStatus}</div>
-        <div className="board-row">
-          {this.renderSquare(0)}
-          {this.renderSquare(1)}
-          {this.renderSquare(2)}
-        </div>
-        <div className="board-row">
-          {this.renderSquare(3)}
-          {this.renderSquare(4)}
-          {this.renderSquare(5)}
-        </div>
-        <div className="board-row">
-          {this.renderSquare(6)}
-          {this.renderSquare(7)}
-          {this.renderSquare(8)}
-        </div>
-      </div>
-    );
 	}
 }
 
@@ -188,12 +82,13 @@ class TestChess extends React.Component {
 			}
 			output.push(opline);
 		}
+		output.reverse();
 		let outputWritten = output.map((arr, i) => <span>{
 			arr.map((block, j) => {
 				if (block[1] != null){
-					return this.renderSquare(block[1], pieceImages[block[0]*6 + block[1]], i, j);
+					return this.renderSquare(block[1], pieceImages[block[0]*6 + block[1]], 7-i, j);
 				} else {
-					return this.renderSquare(block[1], pieceImages[12], i, j);
+					return this.renderSquare(block[1], pieceImages[12], 7-i, j);
 				}
 			})
 			}<br/></span>);
