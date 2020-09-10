@@ -1,10 +1,10 @@
-#Chess Website
+# Chess Website
 
-##Introduction
+## Introduction
 
 The aim of this project is to create a website in which a user can challenge other users over the internet to a game of chess. Users will initially enter a username. They will be presented with a list of other users they can challenge. Once they challenge a user or are challenged, and the one challenged accepts the match, the two users will be able to play a game of chess.
 
-##User Interface
+## User Interface
 
 ![Landing Page](https://i.imgur.com/Yz7WpWu.png)
 
@@ -14,13 +14,13 @@ The landing page is quite simple. After entering your name, you are shown a list
 
 This screen is when you’re actually challenging another user. The middle area contains the chess game, which is controlled via the mouse. The left side displays the move history, while the right side displays the time each user has spent with their moves, as well as their current score. In a local match, the names on the right side would be replaced by “white” and “black”. In online games, ther is also a "chat" feature that allows players to communicate.
 
-##System Design
+## System Design
 
 My current plan is to build the frontend using ReactJS, since React makes it easier to render changing entities such as the player list or the chess board. The backend server that handles matching players up and running the chess games will use NodeJS, with websockets connecting the client and server. Websockets are being used over http since they seem better to use for frequent real-time updates in games such as chess. No persistent data is necessary, so I won’t need any sort of data storage. The project will likely be hosted on Heroku, since I’ve been able to use that in a previous project for multiplayer games.
 
 ![System Design](https://i.imgur.com/HNvsWs8.jpg)
 
-##Schedule
+## Schedule
 
 * Week 1: Finish chess class that accurately simulates a game of chess - Complete
 * Week 2: Create local multiplayer version of chess website that allows two players on the same machine to play with each other. - Complete
