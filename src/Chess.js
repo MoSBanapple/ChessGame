@@ -20,10 +20,13 @@ export class ChessGame {
 	}
 	
 	initializeBoard(){
+		this.message = "White move";
 		this.currentTurn = 0;
 		this.boardHistory = [];
 		this.points = [0, 0];
 		this.board = new Array(8);
+		this.lastTime = new Date().getTime();
+		this.times = [0, 0];
 		for (let i = 0; i < 8; i++){
 			this.board[i] = new Array(8).fill(null);
 		}
@@ -161,17 +164,25 @@ export class ChessGame {
 	}
 	
 	makeMove(x1, y1, x2, y2){
+		if (this.currentTurn == 0){
+			this.message = "Black move";
+		} else {
+			this.message = "White move";
+		}
 		if (!this.isInBoard(x1, y1) || !this.isInBoard(x2, y2)){
 			console.log("Destination not in board");
+			this.message = "Destination not in board";
 			return false;
 		}
 		if (!this.board[x1][y1]){
 			console.log("No piece there");
+			this.message = "No piece there";
 			return false;
 		}
 		let targetPiece = this.board[x1][y1];
 		if (targetPiece.color != this.currentTurn){
 			console.log("Not that color's turn");
+			this.message = "Not that color's turn";
 			return false;
 		}
 		let beforeBoard = this.getBoardCopy();
@@ -193,6 +204,7 @@ export class ChessGame {
 				this.board[x2][y2] = null;
 			} else {
 				console.log("Impossible move");
+				this.message = "Impossible move";
 				return false;
 			}
 		} else {
@@ -207,6 +219,7 @@ export class ChessGame {
 			}
 			if (!possible){
 				console.log("Impossible move");
+				this.message = "Impossible move";
 				return false;
 			}
 		
@@ -228,21 +241,32 @@ export class ChessGame {
 		if (this.isKingChecked(this.currentTurn)){
 			this.board = beforeBoard;
 			console.log("King checked, can't do that");
+			this.message = "King checked, can't do that";
 			return false;
 		}
 		if (targetPiece.type == 0 && (x2 == 0 || x2 == 7)){
 			this.board[x2][y2].type = 4;
 		}
 		this.points[this.currentTurn] += addPoints;
+		let currentTime = new Date().getTime();
+		this.times[this.currentTurn] += currentTime - this.lastTime;
+		this.lastTime = currentTime;
 		this.currentTurn = 1 - this.currentTurn;
 		this.clearPassant(this.currentTurn);
 		this.boardHistory.push(beforeBoard);
 		if (this.isCheckmated(this.currentTurn)){
 			console.log("Checkmate on " + this.currentTurn);
+			if (this.currentTurn == 1){
+				this.message = "Checkmate! White wins.";
+			} else {
+				this.message = "Checkmate! Black wins.";
+			}
 		} else if (this.isStalemated(this.currentTurn)){
 			console.log("Stalemate");
+			this.message = "Stalemate."
 		}
 		console.log("Points: " + this.points[0] + ", " + this.points[1]);
+		console.log("Times: " + (this.times[0]/1000) + ", " + (this.times[1]/1000));
 		return true;
 	}
 	
