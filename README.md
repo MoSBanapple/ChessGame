@@ -1,68 +1,28 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+#Chess Website
 
-## Available Scripts
+##Introduction
 
-In the project directory, you can run:
+The aim of this project is to create a website in which a user can challenge other users over the internet to a game of chess. Users will initially enter a username. They will be presented with a list of other users they can challenge. Once they challenge a user or are challenged, and the one challenged accepts the match, the two users will be able to play a game of chess.
 
-### `npm start`
+##User Interface
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+![Landing Page](https://i.imgur.com/Yz7WpWu.png)
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+The landing page is quite simple. After entering your name, you are shown a list of present users, with buttons allowing you to challenge each one. When a user is challenged, a prompt will appear below allowing that user to accept or decline that challenge. Alternatively, one can choose to play a local game in which both players play on the same machine. When two users agree to play a game, they should be removed from the list of available users and put into the list of currently active games.
 
-### `npm test`
+![Game page](https://i.imgur.com/JQVBBdF.png)
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+This screen is when you’re actually challenging another user. The middle area contains the chess game, which is controlled via the mouse. The left side displays the move history, while the right side displays the time each user has spent with their moves, as well as their current score. In a local match, the names on the right side would be replaced by “white” and “black”. In online games, ther is also a "chat" feature that allows players to communicate.
 
-### `npm run build`
+##System Design
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+My current plan is to build the frontend using ReactJS, since React makes it easier to render changing entities such as the player list or the chess board. The backend server that handles matching players up and running the chess games will use NodeJS, with websockets connecting the client and server. Websockets are being used over http since they seem better to use for frequent real-time updates in games such as chess. No persistent data is necessary, so I won’t need any sort of data storage. The project will likely be hosted on Heroku, since I’ve been able to use that in a previous project for multiplayer games.
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
+![System Design](https://i.imgur.com/HNvsWs8.jpg)
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+##Schedule
 
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `npm run build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+* Week 1: Finish chess class that accurately simulates a game of chess - Complete
+* Week 2: Create local multiplayer version of chess website that allows two players on the same machine to play with each other. - Complete
+* Week 3: Enable users to challenge and play against others over the internet - By 9/18-9/23, hopefully
+* Week 4: (Tentative) Allow users to save a game and continue that game at a later date.
