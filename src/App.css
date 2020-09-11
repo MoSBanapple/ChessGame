@@ -66,3 +66,22 @@
 	display: inline-block
 }
 
+.gameSpace{
+	display: inline-block;
+	padding: 50px;
+}
+
+.historySpace{
+	height: 600px;
+	width: 200px;
+	border: 2px solid black;
+	overflow: auto;
+	left: 20%;
+	font-size: calc(4px + 2vmin);
+	
+}
+
+.parent{
+	display: flex;
+}
+

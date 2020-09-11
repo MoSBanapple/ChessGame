@@ -15,17 +15,22 @@ class Square extends React.Component {
 	}
 }
 
+function chessNotation(x, y){
+	return String.fromCharCode(65+y) + (x + 1);
+	
+}
+
 class TestChess extends React.Component {
 	constructor(props){
 		super(props);
 		this.chess = new ChessGame();
 		this.pieceDict = {
-			0: 'P',
-			1: 'R',
-			2: 'H',
-			3: 'B',
-			4: 'Q',
-			5: 'K'
+			0: 'Pawn',
+			1: 'Rook',
+			2: 'Knight',
+			3: 'Bishop',
+			4: 'Queen',
+			5: 'King'
 		}
 		this.state = {
 			isSecondClick: false,
@@ -95,9 +100,27 @@ class TestChess extends React.Component {
 		return (<div>{outputWritten}</div>);
 	}
 	
+	renderHistory(){
+		let hist = []
+		for (let i = 0; i < this.chess.moveHistory.length; i++){
+			hist.unshift(this.chess.moveHistory[i]);
+		}
+		let output = hist.map((arr) => {
+			let str = ""
+			str += chessNotation(arr[0], arr[1]) + " to " + chessNotation(arr[2], arr[3]);
+			if (arr[4] >= 0){
+				str += ", " + this.pieceDict[arr[4]];
+			}
+			return (<li>{str}</li>);
+		});
+		return (<ul>{output}</ul>);
+	}
+	
 	render () {
 		return (
-			<div>
+			<div className="parent">
+			<div className="historySpace">{this.renderHistory()}</div>
+			<div className="gameSpace">
 			<div className="infoBox">
 			White<br/>
 			Time: {this.chess.times[0]/1000}<br/>
@@ -114,6 +137,7 @@ class TestChess extends React.Component {
 			
 			</div>
 			<p>{this.chess.message}</p>
+			</div>
 			</div>
 		);
 	}

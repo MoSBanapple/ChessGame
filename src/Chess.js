@@ -27,6 +27,7 @@ export class ChessGame {
 		this.board = new Array(8);
 		this.lastTime = new Date().getTime();
 		this.times = [0, 0];
+		this.moveHistory = [];
 		for (let i = 0; i < 8; i++){
 			this.board[i] = new Array(8).fill(null);
 		}
@@ -169,6 +170,7 @@ export class ChessGame {
 		} else {
 			this.message = "White move";
 		}
+		let capturedPiece = -1;
 		if (!this.isInBoard(x1, y1) || !this.isInBoard(x2, y2)){
 			console.log("Destination not in board");
 			this.message = "Destination not in board";
@@ -229,10 +231,12 @@ export class ChessGame {
 			if (targetPiece.type == 0 && y1 != y2 && !this.board[x2][y2]){
 				
 				this.board[x1][y2] = null;
+				capturedPiece = 0;
 				addPoints = 1;
 			}
 			targetPiece.moved = true;
 			if (this.board[x2][y2]){
+				capturedPiece = this.board[x2][y2].type;
 				addPoints = pointValues[this.board[x2][y2].type];
 			}
 			this.board[x2][y2] = targetPiece;
@@ -265,6 +269,7 @@ export class ChessGame {
 			console.log("Stalemate");
 			this.message = "Stalemate."
 		}
+		this.moveHistory.push([x1, y1, x2, y2, capturedPiece]);
 		console.log("Points: " + this.points[0] + ", " + this.points[1]);
 		console.log("Times: " + (this.times[0]/1000) + ", " + (this.times[1]/1000));
 		return true;
