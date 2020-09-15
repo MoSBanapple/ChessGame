@@ -172,18 +172,18 @@ export class ChessGame {
 		}
 		let capturedPiece = -1;
 		if (!this.isInBoard(x1, y1) || !this.isInBoard(x2, y2)){
-			console.log("Destination not in board");
+			//console.log("Destination not in board");
 			this.message = "Destination not in board";
 			return false;
 		}
 		if (!this.board[x1][y1]){
-			console.log("No piece there");
+			//console.log("No piece there");
 			this.message = "No piece there";
 			return false;
 		}
 		let targetPiece = this.board[x1][y1];
 		if (targetPiece.color != this.currentTurn){
-			console.log("Not that color's turn");
+			//console.log("Not that color's turn");
 			this.message = "Not that color's turn";
 			return false;
 		}
@@ -205,7 +205,7 @@ export class ChessGame {
 				this.board[x1][y1] = null;
 				this.board[x2][y2] = null;
 			} else {
-				console.log("Impossible move");
+				//console.log("Impossible move");
 				this.message = "Impossible move";
 				return false;
 			}
@@ -220,7 +220,7 @@ export class ChessGame {
 				}
 			}
 			if (!possible){
-				console.log("Impossible move");
+				//console.log("Impossible move");
 				this.message = "Impossible move";
 				return false;
 			}
@@ -244,7 +244,7 @@ export class ChessGame {
 		}
 		if (this.isKingChecked(this.currentTurn)){
 			this.board = beforeBoard;
-			console.log("King checked, can't do that");
+			//console.log("King checked, can't do that");
 			this.message = "King checked, can't do that";
 			return false;
 		}
@@ -259,19 +259,19 @@ export class ChessGame {
 		this.clearPassant(this.currentTurn);
 		this.boardHistory.push(beforeBoard);
 		if (this.isCheckmated(this.currentTurn)){
-			console.log("Checkmate on " + this.currentTurn);
+			//console.log("Checkmate on " + this.currentTurn);
 			if (this.currentTurn == 1){
 				this.message = "Checkmate! White wins.";
 			} else {
 				this.message = "Checkmate! Black wins.";
 			}
 		} else if (this.isStalemated(this.currentTurn)){
-			console.log("Stalemate");
+			//console.log("Stalemate");
 			this.message = "Stalemate."
 		}
 		this.moveHistory.push([x1, y1, x2, y2, capturedPiece]);
-		console.log("Points: " + this.points[0] + ", " + this.points[1]);
-		console.log("Times: " + (this.times[0]/1000) + ", " + (this.times[1]/1000));
+		//console.log("Points: " + this.points[0] + ", " + this.points[1]);
+		//console.log("Times: " + (this.times[0]/1000) + ", " + (this.times[1]/1000));
 		return true;
 	}
 	
@@ -340,7 +340,7 @@ export class ChessGame {
 					this.board[move[0]][move[1]] = this.board[i][j];
 					this.board[i][j] = null;
 					if (!this.isKingChecked(color)){
-						console.log(i, j);
+						//console.log(i, j);
 						checkMated = false;
 					}
 					this.board[i][j] = this.board[move[0]][move[1]];
@@ -359,6 +359,9 @@ export class ChessGame {
 			return false;
 		}
 		let x = color*7;
+		if (!this.board[x][4] || !this.board[x][side*7]){
+			return false;
+		}
 		if (this.board[x][4].moved || this.board[x][side*7].moved){
 			return false;
 		}
