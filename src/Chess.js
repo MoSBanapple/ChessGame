@@ -370,6 +370,7 @@ export class ChessGame {
 				return false;
 			}
 		}
+		
 		return true;
 	}
 	
