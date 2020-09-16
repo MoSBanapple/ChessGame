@@ -44,6 +44,7 @@ class Chat extends Component {
   }
 
   render() {
+	  
     return (
       <div>
         <label htmlFor="name">
