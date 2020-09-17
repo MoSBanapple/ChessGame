@@ -1,35 +1,35 @@
-const express = require("express");
-const http = require("http");
-const socketIo = require("socket.io");
+var express = require('express');
+var http = require('http');
+var path = require('path');
+var socketIO = require('socket.io');
 
-const port = process.env.PORT || 4001;
-const index = require("./routes/index");
+var app = express();
+var server = http.Server(app);
+var io = socketIO(server);
 
-const app = express();
-app.use(index);
+var port = process.env.PORT || 5000;
 
-const server = http.createServer(app);
+app.set('port', port);
+app.use(express.static(path.join(__dirname + 'build')));
 
-const io = socketIo(server);
-
-let interval;
-
-io.on("connection", (socket) => {
-  console.log("New client connected");
-  if (interval) {
-    clearInterval(interval);
-  }
-  interval = setInterval(() => getApiAndEmit(socket), 1000);
-  socket.on("disconnect", () => {
-    console.log("Client disconnected");
-    clearInterval(interval);
-  });
+// Routing
+app.get('/', function(request, response) {
+  response.sendFile(path.join(__dirname, 'build', 'index.html'));
 });
 
-const getApiAndEmit = socket => {
-  const response = new Date();
-  // Emitting a new message. Will be consumed by the client
-  socket.emit("FromAPI", response);
-};
+// Starts the server.
+server.listen(port, function() {
+  console.log('Starting server on port 5000');
+});
 
-server.listen(port, () => console.log(`Listening on port ${port}`));
+
+var players = {};
+
+io.on('connection', function(socket) {
+  socket.on('new player', function(playerName) {
+	  console.log(playerName);
+    players[socket.id] = {
+	  name: playerName,
+    };
+  });
+});
