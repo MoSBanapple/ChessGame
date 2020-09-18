@@ -5,7 +5,7 @@ import {Piece, ChessGame} from './Chess.js';
 import pieceImages from './images.js';
 import ChessComponent from './ChessComponent.js';
 import socketIOClient from "socket.io-client";
-const ENDPOINT = "http://localhost:3000";
+const ENDPOINT = "/";
 
 var socket = socketIOClient(ENDPOINT);
 
