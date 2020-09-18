@@ -16,7 +16,7 @@
   },
   "scripts": {
 	"server": "node server.js",
-	"start": "node ./server/bin/www",
+	"start": "node server.js",
     "devstart": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
