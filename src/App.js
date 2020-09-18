@@ -13,7 +13,7 @@ class PlayerList extends React.Component {
 	constructor(props){
 		super(props);
 		this.state = {
-			players: [],
+			players: {},
 		};
 		socket.on("players", function(players){
 			this.setState({players: players});
@@ -21,9 +21,11 @@ class PlayerList extends React.Component {
 	}
 	
 	renderPlayers(){
-		let output = this.state.players.map((name) => {
-			return (<li>{name}</li>);
-		});
+		let output = []
+		
+		for (var id in this.state.players){
+			output.push((<li>{this.state.players[id].name}</li>));
+		}
 		return (<ul>{output}</ul>);
 	}
 	

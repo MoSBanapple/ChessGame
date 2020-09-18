@@ -22,12 +22,21 @@ server.listen(port, function() {
   console.log('Starting server on port 3000');
 });
 
-var playerList = []
+var players = {}
 
 io.on('connection', function(socket) {
   socket.on('new player', function(playerName) {
     console.log(playerName);
-	playerList.push(playerName);
-	io.sockets.emit("players", playerList);
+	players[socket.id] = {
+		name: playerName
+	};
+	io.sockets.emit("players", players);
+  });
+  
+  socket.on('disconnect', function(){
+	  if (socket.id in players){  
+		delete players[socket.id];
+	  }
+	  io.sockets.emit("players", players);
   });
 });
