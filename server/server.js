@@ -27,6 +27,8 @@ app.get('/*', (req, res) => {
   res.sendFile(path.join(__dirname, 'build', 'index.html'));
 });
 
+server.listen(process.env.PORT || 3000);
+
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
@@ -34,7 +36,8 @@ app.use('/users', usersRouter);
 app.use(function(req, res, next) {
   next(createError(404));
 });
-console.log("Listening on port 3000");
+
+
 // error handler
 app.use(function(err, req, res, next) {
   // set locals, only providing error in development
@@ -47,3 +50,12 @@ app.use(function(err, req, res, next) {
 });
 
 module.exports = app;
+
+io.on('connection', function(socket) {
+  socket.on('new player', function(playerName) {
+    console.log("playerName");
+  });
+  
+});
+
+const port = 3000;

@@ -7,11 +7,10 @@ var app = express();
 var server = http.Server(app);
 var io = socketIO(server);
 
-
-var port = process.env.PORT || 5000;
+var port = process.env.PORT || 3000;
 
 app.set('port', port);
-app.use(express.static(path.join(__dirname + 'build')));
+app.use(express.static(path.join(__dirname, 'build')));
 
 // Routing
 app.get('/', function(request, response) {
@@ -20,17 +19,11 @@ app.get('/', function(request, response) {
 
 // Starts the server.
 server.listen(port, function() {
-  console.log('Starting server on port 5000');
+  console.log('Starting server on port 3000');
 });
-
-
-var players = {};
 
 io.on('connection', function(socket) {
   socket.on('new player', function(playerName) {
-	  console.log(playerName);
-    players[socket.id] = {
-	  name: playerName,
-    };
+    console.log(playerName);
   });
 });
