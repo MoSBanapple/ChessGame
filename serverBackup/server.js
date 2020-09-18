@@ -51,9 +51,12 @@ app.use(function(err, req, res, next) {
 
 module.exports = app;
 
+var playerList = [];
+
 io.on('connection', function(socket) {
   socket.on('new player', function(playerName) {
-    console.log("playerName");
+	playerList.push(playerName);
+	io.sockets.emit('players', playerList);
   });
   
 });

@@ -9,10 +9,36 @@ const ENDPOINT = "/";
 
 var socket = socketIOClient(ENDPOINT);
 
+class PlayerList extends React.Component {
+	constructor(props){
+		super(props);
+		this.state = {
+			players: [],
+		};
+		socket.on("players", function(players){
+			this.setState({players: players});
+		}.bind(this));
+	}
+	
+	renderPlayers(){
+		let output = this.state.players.map((name) => {
+			return (<li>{name}</li>);
+		});
+		return (<ul>{output}</ul>);
+	}
+	
+	render(){
+		return (
+			<div>{this.renderPlayers()}</div>
+		);
+	}
+}
+
 
 
 function App() {
-	socket.emit("new player", "yeahhh boy");
+	var playerName = prompt("Please enter your name", "");
+	socket.emit("new player", playerName);
 	console.log("yo");
 	/*
 	const [response, setResponse] = useState("");
@@ -28,8 +54,7 @@ function App() {
   return (
     <div>
       <header className="App-header">
-		
-		<ChessComponent/>
+		<PlayerList/>
       </header>
     </div>
   );

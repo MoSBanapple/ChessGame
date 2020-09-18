@@ -22,8 +22,12 @@ server.listen(port, function() {
   console.log('Starting server on port 3000');
 });
 
+var playerList = []
+
 io.on('connection', function(socket) {
   socket.on('new player', function(playerName) {
     console.log(playerName);
+	playerList.push(playerName);
+	io.sockets.emit("players", playerList);
   });
 });
