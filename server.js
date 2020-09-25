@@ -126,6 +126,9 @@ io.on('connection', function(socket) {
   
   socket.on("chat", function(message){
 	  console.log(message);
+	  if (!players[socket.id]){
+		  return;
+	  }
 	  let playerName = players[socket.id].name;
 	  let thisGameNum = players[socket.id].currentGame;
 	  games[thisGameNum].chat.push([message, playerName]);
@@ -148,10 +151,16 @@ io.on('connection', function(socket) {
 			console.log("gameEnd");
 			console.log(targetGame);
 			for (let i = 0; i < targetGame.players.length; i++){
+				if (!players[targetGame.players[i]]){
+					continue;
+				}
 				players[targetGame.players[i]].currentGame = null;
 				players[targetGame.players[i]].available = true;
 			}
 			for (let i = 0; i < targetGame.spectators.length; i++){
+				if (!players[targetGame.spectators[i]]){
+					continue;
+				}
 				players[targetGame.spectators[i]].currentGame = null;
 				players[targetGame.spectators[i]].available = true;
 			}

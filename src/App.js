@@ -163,6 +163,7 @@ class PlayerList extends React.Component {
 		}
 		return (
 			<div>
+			<h1>Chess</h1>
 			<button onClick={() => this.handleLocal()}>Local Game</button>
 			<h5>Players</h5>
 			{this.renderPlayers()}
