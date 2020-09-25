@@ -3,7 +3,13 @@ import logo from './logo.svg';
 import './App.css';
 import {Piece, ChessGame} from './Chess.js';
 import pieceImages from './images.js';
+import socketIOClient from "socket.io-client";
+/*
+import socketIOClient from "socket.io-client";
+const ENDPOINT = "/";
 
+var socket = socketIOClient(ENDPOINT);
+*/
 class Square extends React.Component {
 	render(){
 		return (
@@ -21,6 +27,10 @@ class ChessComponent extends React.Component {
 	constructor(props){
 		super(props);
 		this.chess = new ChessGame();
+		if (this.props.chess != null){
+			this.chess = this.props.chess;
+		}
+		
 		this.pieceDict = {
 			0: 'Pawn',
 			1: 'Rook',
@@ -29,17 +39,45 @@ class ChessComponent extends React.Component {
 			4: 'Queen',
 			5: 'King'
 		}
+		let receivedChat = [];
+		if (this.props.chat){
+			receivedChat = this.props.chat;
+		}
 		this.state = {
 			isSecondClick: false,
 			firstClickX: -1,
 			firstClickY: -1,
+			currentChatMessage: "",
+			chatLog: receivedChat,
 		};
+		if (this.props.socket != null){
+			this.props.socket.on("move", function(move){
+				if (move[4] != this.props.player){
+					this.chess.makeMove(move[0], move[1], move[2], move[3]);
+					this.forceUpdate();
+				}
+			}.bind(this));
+			this.props.socket.on("chatUpdate", function(up){
+				
+				let newLog = this.state.chatLog.slice();
+				newLog.push(up);
+				this.setState({chatLog: newLog});
+			}.bind(this));
+		}
+		
 	}
 	handleClick(x, y){
 		console.log(x, y);
+		if (this.props.player != null && (this.props.player >= 2 || this.props.player != this.chess.currentTurn)){
+			return;
+		}
 		if (this.state.isSecondClick){
 			if (!(x == this.state.firstClickX && y == this.state.firstClickY)){
-				this.chess.makeMove(this.state.firstClickX, this.state.firstClickY, x, y);
+				if (this.chess.makeMove(this.state.firstClickX, this.state.firstClickY, x, y)){
+					if (this.props.player != null){
+						this.props.socket.emit("move", [this.state.firstClickX, this.state.firstClickY, x, y, this.props.player]);
+					}
+				}
 			}
 			this.setState({
 				isSecondClick: false,
@@ -113,19 +151,63 @@ class ChessComponent extends React.Component {
 		return (<ul>{output}</ul>);
 	}
 	
+	handleChatChange(event){
+		this.setState({currentChatMessage: event.target.value});
+	}
+	
+	handleKeyPress(event){
+		if (event.key === 'Enter'){
+			this.props.socket.emit("chat", this.state.currentChatMessage);
+			this.setState({currentChatMessage: ""});
+		}
+	}
+	
+	
+	
+	renderChat(){
+		let output = [];
+		output.push(<input type="text" 
+		placeholder={"Chat here"}
+		value={this.state.currentChatMessage}
+		onChange={this.handleChatChange.bind(this)} 
+		onKeyPress={this.handleKeyPress.bind(this)}
+		/>);
+		output.push(<br/>);
+		for (let i = this.state.chatLog.length - 1; i >= 0; i--){
+			let messageSender = this.state.chatLog[i][1];
+			let messageBody = this.state.chatLog[i][0];
+			output.push(<span style={{fontWeight: "bold"}}>{messageSender + ": "}</span>);
+			output.push(<span>{messageBody}</span>);
+			output.push(<br/>);
+		}
+		return (<span>{output}</span>);
+	}
+	
 	render () {
+		let whiteName = "White";
+		if (this.props.whiteName){
+			whiteName += " (" + this.props.whiteName + ")";
+		}
+		let blackName = "Black";
+		if (this.props.blackName){
+			blackName += " (" + this.props.blackName + ")";
+		}
+		let chatSpace = null;
+		if (this.props.player != null){
+			chatSpace = (<div className="chatSpace">{this.renderChat()}</div>);
+		}
 		return (
 			<div className="parent">
 			<div className="historySpace">{this.renderHistory()}</div>
 			<div className="gameSpace">
 			<div className="infoBox">
-			White<br/>
+			{whiteName}<br/>
 			Time: {this.chess.times[0]/1000}<br/>
 			Points: {this.chess.points[0]}
 			</div>
 			<div className="buffer"/>
 			<div className="infoBox">
-			Black<br/>
+			{blackName}<br/>
 			Time: {this.chess.times[1]/1000}<br/>
 			Points: {this.chess.points[1]}
 			</div>
@@ -135,6 +217,7 @@ class ChessComponent extends React.Component {
 			</div>
 			<p>{this.chess.message}</p>
 			</div>
+			{chatSpace}
 			</div>
 		);
 	}

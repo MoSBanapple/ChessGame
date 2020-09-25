@@ -54,7 +54,6 @@
 
 .infoBox {
 	width: 150px;
-	height: 90px;
 	border: 2px solid black;
 	font-size: calc(5px + 2vmin);
 	display: inline-block
@@ -80,6 +79,17 @@
 	font-size: calc(4px + 2vmin);
 	
 }
+
+.chatSpace{
+	height: 600px;
+	width: 300px;
+	border: 2px solid black;
+	overflow: auto;
+	left: 60%;
+	font-size: calc(4px + 2vmin);
+	
+}
+
 
 .parent{
 	display: flex;
