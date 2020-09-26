@@ -2,7 +2,7 @@
 
 ## Introduction
 
-The aim of this project is to create a website in which a user can challenge other users over the internet to a game of chess. Users will initially enter a username. They will be presented with a list of other users they can challenge. Once they challenge a user or are challenged, and the one challenged accepts the match, the two users will be able to play a game of chess. You can test it at https://dz-test-react.herokuapp.com/
+The aim of this project is to create a website in which a user can challenge other users over the internet to a game of chess. Users will initially enter a username. They will be presented with a list of other users they can challenge. Once they challenge a user or are challenged, and the one challenged accepts the match, the two users will be able to play a game of chess. You can try it at https://dz-chess-app.herokuapp.com/
 
 ## User Interface
 
