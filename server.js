@@ -4,7 +4,7 @@ var express = require('express');
 var http = require('http');
 var path = require('path');
 var socketIO = require('socket.io');
-
+const Firestore = require('@google-cloud/firestore');
 var app = express();
 var server = http.Server(app);
 var io = socketIO(server);
@@ -13,6 +13,32 @@ var port = process.env.PORT || 3000;
 
 app.set('port', port);
 app.use(express.static(path.join(__dirname, 'build')));
+
+const db = new Firestore({
+  projectId: 'chessapp-290922',
+  keyFilename: 'keyfile.json',
+});
+
+const docRef = db.collection('users').doc('alovelace');
+
+docRef.set({
+  first: 'Ada',
+  last: 'Lovelace',
+  born: 1815
+});
+  
+const aTuringRef = db.collection('users').doc('aturing');
+
+aTuringRef.set({
+  'first': 'Alan',
+  'middle': 'Mathison',
+  'last': 'Turing',
+  'born': 1912
+});
+  
+
+
+
 
 // Routing
 app.get('/', function(request, response) {
