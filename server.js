@@ -26,11 +26,12 @@ docRef.set({
   last: 'Lovelace',
   born: 1815
 });
+
   
 const aTuringRef = db.collection('users').doc('aturing');
 
 aTuringRef.set({
-  'first': 'Alan',
+  'first': 'Aln',
   'middle': 'Mathison',
   'last': 'Turing',
   'born': 1912
