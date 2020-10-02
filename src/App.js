@@ -61,6 +61,9 @@ class PlayerList extends React.Component {
 			this.playerInfo = null;
 			this.playerNumber = 0;
 		}.bind(this));
+		socket.on("testRec", function(rec){
+			console.log(rec);
+		}.bind(this));
 		
 		
 		socket.emit("new player", this.playerName);
@@ -79,6 +82,11 @@ class PlayerList extends React.Component {
 	handleSpectate(specNum){
 		console.log("Trying to spectate " + specNum);
 		socket.emit("spectate", specNum);
+	}
+	
+	handleJumpin(targetGame, playerNum){
+		console.log("Jumping in " + targetGame + " on " + playerNum);
+		socket.emit("jumpIn", [targetGame, playerNum]);
 	}
 	
 	handleLocal(){
@@ -116,13 +124,18 @@ class PlayerList extends React.Component {
 		let output = [];
 		for (let game in this.state.games){
 			let targetGame = this.state.games[game];
-			if (!this.state.players[targetGame.players[0]] || !this.state.players[targetGame.players[1]]){
-				continue;
-			}
-			let gameText = this.state.players[targetGame.players[0]].name + " VS " + this.state.players[targetGame.players[1]].name;
+			let gameText = targetGame.playerNames[0] + " VS " + targetGame.playerNames[1];
 			let spectateButton = (<button onClick={() => this.handleSpectate(game)}>Spectate</button>);
+			let whiteButton = null;
+			if (targetGame.available[0]){
+				whiteButton = (<button onClick={() => this.handleJumpin(game, 0)}>Play White</button>);
+			}
+			let blackButton = null;
+			if (targetGame.available[1]){
+				whiteButton = (<button onClick={() => this.handleJumpin(game, 1)}>Play Black</button>);
+			}
 			output.push((<li>
-			{gameText}&nbsp;{spectateButton}
+			{gameText}&nbsp;{spectateButton}&nbsp;{whiteButton}&nbsp;{blackButton}
 			</li>));
 		}
 		return (<ul>{output}</ul>);
@@ -158,6 +171,7 @@ class PlayerList extends React.Component {
 				socket={socket}
 				chess={insertBoard}
 				chat={this.gameInfo.chat}
+				gameInfo={this.gameInfo}
 				/>);
 			return (<div>{thisGame}</div>);
 		}

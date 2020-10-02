@@ -49,6 +49,8 @@ class ChessComponent extends React.Component {
 			firstClickY: -1,
 			currentChatMessage: "",
 			chatLog: receivedChat,
+			whiteName: this.props.whiteName,
+			blackName: this.props.blackName,
 		};
 		if (this.props.socket != null){
 			this.props.socket.on("move", function(move){
@@ -63,6 +65,14 @@ class ChessComponent extends React.Component {
 				newLog.push(up);
 				this.setState({chatLog: newLog});
 			}.bind(this));
+			this.props.socket.on("nameUpdate", function(newName){
+				console.log(newName);
+				if (newName[1] == 0){
+					this.setState({whiteName: newName[0]});
+				} else {
+					this.setState({blackName: newName[0]});
+				}
+			}.bind(this));
 		}
 		
 	}
@@ -76,8 +86,14 @@ class ChessComponent extends React.Component {
 				if (this.chess.makeMove(this.state.firstClickX, this.state.firstClickY, x, y)){
 					if (this.props.player != null){
 						this.props.socket.emit("move", [this.state.firstClickX, this.state.firstClickY, x, y, this.props.player]);
+						if (this.chess.isCheckmated(this.chess.currentTurn)){
+							console.log("checkmated");
+							this.props.socket.emit("checkmate", this.props.gameInfo.gameNumber);
+						}
 					}
+					
 				}
+				
 			}
 			this.setState({
 				isSecondClick: false,
@@ -185,11 +201,11 @@ class ChessComponent extends React.Component {
 	
 	render () {
 		let whiteName = "White";
-		if (this.props.whiteName){
+		if (this.state.whiteName){
 			whiteName += " (" + this.props.whiteName + ")";
 		}
 		let blackName = "Black";
-		if (this.props.blackName){
+		if (this.state.blackName){
 			blackName += " (" + this.props.blackName + ")";
 		}
 		let chatSpace = null;
