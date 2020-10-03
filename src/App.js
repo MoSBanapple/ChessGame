@@ -128,11 +128,11 @@ class PlayerList extends React.Component {
 			let spectateButton = (<button onClick={() => this.handleSpectate(game)}>Spectate</button>);
 			let whiteButton = null;
 			if (targetGame.available[0]){
-				whiteButton = (<button onClick={() => this.handleJumpin(game, 0)}>Play White</button>);
+				whiteButton = (<button onClick={() => this.handleJumpin(game, 0)}>Play as White</button>);
 			}
 			let blackButton = null;
 			if (targetGame.available[1]){
-				whiteButton = (<button onClick={() => this.handleJumpin(game, 1)}>Play Black</button>);
+				whiteButton = (<button onClick={() => this.handleJumpin(game, 1)}>Play as Black</button>);
 			}
 			output.push((<li>
 			{gameText}&nbsp;{spectateButton}&nbsp;{whiteButton}&nbsp;{blackButton}

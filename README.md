@@ -16,9 +16,9 @@ This screen is when you’re actually challenging another user. The middle area 
 
 ## System Design
 
-My current plan is to build the frontend using ReactJS, since React makes it easier to render changing entities such as the player list or the chess board. The backend server that handles matching players up and running the chess games will use NodeJS, with websockets connecting the client and server. Websockets are being used over http since they seem better to use for frequent real-time updates in games such as chess. No persistent data is necessary, so I won’t need any sort of data storage. The project will likely be hosted on Heroku, since I’ve been able to use that in a previous project for multiplayer games.
+My current plan is to build the frontend using ReactJS, since React makes it easier to render changing entities such as the player list or the chess board. The backend server that handles matching players up and running the chess games will use NodeJS, with websockets connecting the client and server. Websockets are being used over http since they seem better to use for frequent real-time updates in games such as chess. Persistent data, including players and gamestates, are stored using Google Firestore and retrieved by the node.js server, which doesn't hold any persistent data. The project will likely be hosted on Heroku, since I’ve been able to use that in a previous project for multiplayer games.
 
-![System Design](https://i.imgur.com/HNvsWs8.jpg)
+![System Design](https://i.imgur.com/Zzp9lWz.jpg)
 
 ## Schedule
 
@@ -26,3 +26,4 @@ My current plan is to build the frontend using ReactJS, since React makes it eas
 * Week 2: Create local multiplayer version of chess website that allows two players on the same machine to play with each other. - Complete
 * Week 3: Enable users to challenge and play against others over the internet - By 9/18-9/23, hopefully
 * Week 4: (Tentative) Allow users to save a game and continue that game at a later date.
+* Week 5: Integrate firestore.

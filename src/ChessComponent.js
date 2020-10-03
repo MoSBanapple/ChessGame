@@ -85,10 +85,9 @@ class ChessComponent extends React.Component {
 			if (!(x == this.state.firstClickX && y == this.state.firstClickY)){
 				if (this.chess.makeMove(this.state.firstClickX, this.state.firstClickY, x, y)){
 					if (this.props.player != null){
-						this.props.socket.emit("move", [this.state.firstClickX, this.state.firstClickY, x, y, this.props.player]);
+						this.props.socket.emit("move", [this.state.firstClickX, this.state.firstClickY, x, y, this.props.player, this.chess.isCheckmated(this.chess.currentTurn)]);
 						if (this.chess.isCheckmated(this.chess.currentTurn)){
 							console.log("checkmated");
-							this.props.socket.emit("checkmate", this.props.gameInfo.gameNumber);
 						}
 					}
 					
@@ -202,11 +201,11 @@ class ChessComponent extends React.Component {
 	render () {
 		let whiteName = "White";
 		if (this.state.whiteName){
-			whiteName += " (" + this.props.whiteName + ")";
+			whiteName += " (" + this.state.whiteName + ")";
 		}
 		let blackName = "Black";
 		if (this.state.blackName){
-			blackName += " (" + this.props.blackName + ")";
+			blackName += " (" + this.state.blackName + ")";
 		}
 		let chatSpace = null;
 		if (this.props.player != null){

@@ -253,6 +253,9 @@ io.on('connection', function(socket) {
 			  newMove[i] = move[i];
 		  }
 		  gameData.moves.push(newMove);
+		  if (move[5]){
+			  gameData.finished = true;
+		  }
 		  const gameRef = db.collection('games').doc(thisGameDoc.id);
 		  await gameRef.set(gameData);
 		  io.to(thisGameDoc.id).emit("move", move);
@@ -379,7 +382,7 @@ io.on('connection', function(socket) {
   });
   
   socket.on("checkmate", function(gameNumber){
-	  console.log("received checkmate");
+	  console.log("received checkmate from " + socket.id);
 	  let asyncFunc = async () => {
 		  const thisGameDoc = await db.collection('games').doc(gameNumber).get();
 		  if (!thisGameDoc.exists){
@@ -390,8 +393,11 @@ io.on('connection', function(socket) {
 		  console.log(gameNumber);
 		  let gameData = thisGameDoc.data();
 		  gameData.finished = true;
-		  const gameRef = db.collection('games').doc(gameNumber);
-		  await gameRef.set(gameData);
+		  //console.log(gameData);
+		  await db.collection('games').doc(gameData.gameNumber).set(gameData);
+		  const testDoc = await db.collection('games').doc(gameNumber).get();
+		  //console.log(testDoc.data());
+		  //await gameRef.set(gameData);
 		  
 	  };
 	  asyncFunc();
@@ -400,7 +406,7 @@ io.on('connection', function(socket) {
   
   
   socket.on('disconnect', function(){
-	  //something's wrong
+	  console.log("Disconnecting player " + socket.id);
 	  let asyncFunc = async () => {
 		  const thisPlayerDoc = await db.collection('players').doc(socket.id).get();
 		  console.log("preDeleting");
@@ -417,8 +423,9 @@ io.on('connection', function(socket) {
 			  }
 			  let gameData = targetGameDoc.data();
 			  if (gameData.players.includes(socket.id)){
-				  
+				  //console.log(gameData);
 				  if (gameData.finished){
+					  console.log("Deleting game " + gameData.gameNumber);
 					let allPlayers = gameData.players.concat(gameData.spectators);
 					for (let i = 0; i < allPlayers.length; i++){
 					  const tempPlayerDoc = await db.collection('players').doc(allPlayers[i]).get();
@@ -434,9 +441,11 @@ io.on('connection', function(socket) {
 					await db.collection('games').doc(gameData.gameNumber).delete();
 				  } else {
 					  if (gameData.players[0] == socket.id){
-						  gameData.avaiable[0] = true;
+						  gameData.available[0] = true;
+						  io.to(gameData.gameNumber).emit("nameUpdate", [null, 0]);
 					  } else {
 						  gameData.available[1] = true;
+						  io.to(gameData.gameNumber).emit("nameUpdate", [null, 1]);
 					  }
 					  const gameRef = db.collection('games').doc(gameData.gameNumber);
 					  gameRef.set(gameData);
