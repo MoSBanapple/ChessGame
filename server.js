@@ -127,6 +127,21 @@ io.on('connection', function(socket) {
 	asyncFunc();
   });
   
+  socket.on("localGame", function(){
+	  let asyncFunc = async () => {
+		  const targetDoc = await db.collection('players').doc(socket.id).get();
+		  if (!targetDoc.exists){
+			  return;
+		  }
+		  let targetData = targetDoc.data();
+		  targetData.available = false;
+		  const playerRef = db.collection('players').doc(socket.id);
+		  await playerRef.set(targetData);
+		  broadcastPlayers();
+	  };
+	  asyncFunc();
+  });
+  
   
   socket.on("challenge", function(otherPlayer) {
 	  if (otherPlayer == socket.id){

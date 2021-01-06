@@ -26,6 +26,7 @@ class PlayerList extends React.Component {
 			players: {},
 			games: {},
 			localGame: false,
+			aiGame: false,
 		};
 		this.playerNumber = 0;
 		this.foundGame = false;
@@ -90,7 +91,12 @@ class PlayerList extends React.Component {
 	}
 	
 	handleLocal(){
+		socket.emit("localGame");
 		this.setState({localGame: true});
+	}
+	handleAI(){
+		socket.emit("localGame");
+		this.setState({aiGame: true});
 	}
 	
 	renderPlayers(){
@@ -148,6 +154,9 @@ class PlayerList extends React.Component {
 		if (this.state.localGame){
 			return (<div><ChessComponent/></div>);
 		}
+		if (this.state.aiGame){
+			return (<div><ChessComponent ai={true} player={0}/></div>);
+		}
 		if (this.foundGame){
 			console.log("should be starting chess");
 			let whiteName = null;
@@ -178,7 +187,9 @@ class PlayerList extends React.Component {
 		return (
 			<div>
 			<h1>Chess</h1>
-			<button onClick={() => this.handleLocal()}>Local Game</button>
+			<h5>Local Game</h5>
+			<button onClick={() => this.handleAI() }>One Player</button><br/>
+			<button onClick={() => this.handleLocal()}>Two Players</button>
 			<h5>Players</h5>
 			{this.renderPlayers()}
 			<h5>Games</h5>

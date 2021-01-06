@@ -12,22 +12,42 @@ export class Piece {
 	
 }
 
+function chessNotation(x, y){
+	return String.fromCharCode(65+y) + (x + 1);
+	
+}
+
+function chessToCoordinates(str){
+	let output = [];
+	for (let i = 0; i < 2; i++){
+		let letter = str[i*2];
+		let num = str[i*2 + 1];
+		output.push(parseInt(num)-1);
+		output.push(letter.charCodeAt(0) - 97);
+	}
+	return output;
+}
+
+
 
 
 export class ChessGame {
 	constructor(){
 		this.initializeBoard();
+		
 	}
 	
 	initializeBoard(){
 		this.message = "White move";
 		this.currentTurn = 0;
+		this.halfMoves = 0
 		this.boardHistory = [];
 		this.points = [0, 0];
 		this.board = new Array(8);
 		this.lastTime = new Date().getTime();
 		this.times = [0, 0];
 		this.moveHistory = [];
+		this.hasCastled = [[false, false], [false, false]];
 		for (let i = 0; i < 8; i++){
 			this.board[i] = new Array(8).fill(null);
 		}
@@ -45,6 +65,23 @@ export class ChessGame {
 			this.board[1][i] = new Piece(0, 0);
 			this.board[6][i] = new Piece(1, 0);
 		}
+		this.aiMove = null;
+		this.aiReady = false;
+		this.stockfish = new Worker("stockfish.js");
+		this.stockfish.onmessage = function(event) {
+			//NOTE: Web Workers wrap the response in an object.
+			console.log(event.data);
+			let splitFish = event.data.split(" ");
+			if (splitFish[0] != "bestmove"){
+				return;
+			}
+			console.log(splitFish);
+			
+			console.log(chessToCoordinates(splitFish[1]));
+			this.aiMove = chessToCoordinates(splitFish[1]);
+			this.aiReady = true;
+		}.bind(this);
+		this.prepareAI();
 	}
 	
 	isValidSpace(x, y){
@@ -165,6 +202,7 @@ export class ChessGame {
 	}
 	
 	makeMove(x1, y1, x2, y2){
+		let halfReset = false;
 		if (this.currentTurn == 0){
 			this.message = "Black move";
 		} else {
@@ -187,11 +225,15 @@ export class ChessGame {
 			this.message = "Not that color's turn";
 			return false;
 		}
+		if (targetPiece.type == 0){
+			halfReset = true;
+		}
 		let beforeBoard = this.getBoardCopy();
 		let addPoints = 0;
 		let pointValues = [1, 5, 3, 3, 9, 10];
+		let castleAttempt = null;
 		if (targetPiece.type == 5 && (x1 == this.currentTurn*7 && y1 == 4) && this.board[x2][y2] && x2 == x1 && (y2 == 0 || y2 == 7)){
-			if (this.canCastle(this.currentTurn, y2/7)){
+			if (this.canCastle(this.currentTurn, Math.floor(y2/7))){
 				let targetRook = this.board[x2][y2];
 				targetPiece.moved = true;
 				targetRook.moved = true;
@@ -204,6 +246,8 @@ export class ChessGame {
 				}
 				this.board[x1][y1] = null;
 				this.board[x2][y2] = null;
+				halfReset = true;
+				castleAttempt = [this.currentTurn, Math.floor(y2/7)];
 			} else {
 				//console.log("Impossible move");
 				this.message = "Impossible move";
@@ -252,6 +296,9 @@ export class ChessGame {
 			this.board[x2][y2].type = 4;
 		}
 		this.points[this.currentTurn] += addPoints;
+		if (addPoints > 0){
+			halfReset = true;
+		}
 		let currentTime = new Date().getTime();
 		this.times[this.currentTurn] += currentTime - this.lastTime;
 		this.lastTime = currentTime;
@@ -270,8 +317,19 @@ export class ChessGame {
 			this.message = "Stalemate."
 		}
 		this.moveHistory.push([x1, y1, x2, y2, capturedPiece]);
+		if (halfReset){
+			this.halfMoves = 0;
+		} else {
+			this.halfMoves += 1;
+		}
+		if (castleAttempt){
+			this.hasCastled[castleAttempt[0]][castleAttempt[1]] = true;
+		}
 		//console.log("Points: " + this.points[0] + ", " + this.points[1]);
 		//console.log("Times: " + (this.times[0]/1000) + ", " + (this.times[1]/1000));
+		console.log(this.getFEN());
+		this.prepareAI();
+		
 		return true;
 	}
 	
@@ -402,6 +460,76 @@ export class ChessGame {
 				}
 			}
 		}
+	}
+	
+	getFEN(){
+		console.log("aimove");
+		console.log(this.aiMove);
+		var output = "";
+		let pieceToLetter = ["p", "r", "n", "b", "q", "k"];
+		let passant = "-";
+		for (let i = this.board.length - 1; i >= 0; i--){
+			let emptyCount = 0;
+			for (let j = 0; j < this.board[i].length; j++){
+				if (this.board[i][j]){
+					if (this.board[i][j].passant){
+						passant = chessNotation(i + (this.board[i][j].color*2 - 1), j).toLowerCase();
+					}
+					if (emptyCount > 0){
+						output += emptyCount.toString();
+						emptyCount = 0;
+					}
+					let temp = pieceToLetter[this.board[i][j].type];
+					if (this.board[i][j].color == 0){
+						temp = temp.toUpperCase();
+					}
+					output += temp;
+				} else {
+					emptyCount += 1;
+				}
+			}
+			if (emptyCount > 0){
+				output += emptyCount.toString();
+			}
+			if (i > 0){
+				output += "/";
+			}
+		}
+		let castling = "";
+		console.log(this.hasCastled);
+		for (let col = 0; col < 2; col++){
+			for (let sid = 0; sid < 2; sid++){
+				if (!this.hasCastled[col][sid]){
+					let temp = "q";
+					if (sid == 0){
+						temp = "k";
+					}
+					if (col == 0){
+						temp = temp.toUpperCase();
+					}
+					castling += temp;
+				}
+			}
+		}
+		if (castling.length == 0){
+			castling = "-";
+		}
+		
+		let active = "w";
+		if (this.currentTurn == 1){
+			active = "b";
+		}
+		let fullMoves = (Math.floor(this.moveHistory.length/2) + 1).toString();
+		let halfMoves = this.halfMoves.toString();
+		output += " " + active + " " + castling + " " + passant + " " + halfMoves + " " + fullMoves;
+		return output;
+	}
+	
+	prepareAI(){
+		this.aiReady = false;
+		let currentFEN = this.getFEN();
+		this.stockfish.postMessage("position fen " + currentFEN);
+		this.stockfish.postMessage("go depth 20");
 	}
 	
 	

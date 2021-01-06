@@ -10,6 +10,16 @@ const ENDPOINT = "/";
 
 var socket = socketIOClient(ENDPOINT);
 */
+
+/*
+var stockfish = new Worker("stockfish.js");
+stockfish.postMessage("go depth 15");
+stockfish.onmessage = function(event) {
+    //NOTE: Web Workers wrap the response in an object.
+    console.log(event.data ? event.data : event);
+	console.log(event.data);
+};
+*/
 class Square extends React.Component {
 	render(){
 		return (
@@ -84,11 +94,14 @@ class ChessComponent extends React.Component {
 		if (this.state.isSecondClick){
 			if (!(x == this.state.firstClickX && y == this.state.firstClickY)){
 				if (this.chess.makeMove(this.state.firstClickX, this.state.firstClickY, x, y)){
-					if (this.props.player != null){
+					if (this.props.player != null && !this.props.ai){
 						this.props.socket.emit("move", [this.state.firstClickX, this.state.firstClickY, x, y, this.props.player, this.chess.isCheckmated(this.chess.currentTurn)]);
 						if (this.chess.isCheckmated(this.chess.currentTurn)){
 							console.log("checkmated");
 						}
+					}
+					if (this.props.ai){
+						this.handleAIMove();
 					}
 					
 				}
@@ -108,6 +121,23 @@ class ChessComponent extends React.Component {
 			});
 			}
 		}
+	}
+	
+	handleAIMove(){
+		if (this.chess.aiReady){
+			let getMove = this.chess.aiMove;
+			if (this.chess.makeMove(getMove[0], getMove[1], getMove[2], getMove[3])){
+				this.setState({
+					isSecondClick: false,
+					firstClickX: -1,
+					firstClickY: -1,
+				});
+				return;
+			} else {
+				console.log("impossible move by AI");
+			}
+		}
+		setTimeout(() => {this.handleAIMove();}, 500);
 	}
 	
 	renderSquare(i, image, x, y){
@@ -208,7 +238,7 @@ class ChessComponent extends React.Component {
 			blackName += " (" + this.state.blackName + ")";
 		}
 		let chatSpace = null;
-		if (this.props.player != null){
+		if (this.props.player != null && !this.props.ai){
 			chatSpace = (<div className="chatSpace">{this.renderChat()}</div>);
 		}
 		return (
