@@ -8,7 +8,7 @@ The aim of this project is to create a website in which a user can challenge oth
 
 ![Landing Page](https://i.imgur.com/Yz7WpWu.png)
 
-The landing page is quite simple. After entering your name, you are shown a list of present users, with buttons allowing you to challenge each one. When a user is challenged, a prompt will appear below allowing that user to accept or decline that challenge. Alternatively, one can choose to play a local game in which both players play on the same machine. When two users agree to play a game, they should be removed from the list of available users and put into the list of currently active games.
+The landing page is quite simple. After entering your name, you are shown a list of present users, with buttons allowing you to challenge each one. When a user is challenged, a prompt will appear below allowing that user to accept or decline that challenge. Alternatively, one can choose to play a local game in which both players play on the same machine. When two users agree to play a game, they should be removed from the list of available users and put into the list of currently active games. Players are also able to play locally, either with two players on the same computer or one player against the Stockfish AI.
 
 ![Game page](https://i.imgur.com/JQVBBdF.png)
 
