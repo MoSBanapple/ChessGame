@@ -16,14 +16,11 @@ app.set('port', port);
 app.use(express.static(path.join(__dirname, 'build')));
 //console.log("yeah");
 //console.log(process.env.GOOGLE_APPLICATION_CREDENTIALS);
-let creds = {
-	"private_key": process.env.FIREBASE_PRIVATE_KEY,
-	"client_email": process.env.FIREBASE_CLIENT_EMAIL,
-}
+let creds = JSON.parse(process.env.FIRESTORE_CREDENTIALS);
 console.log(creds);
 const db = new Firestore({
   projectId: 'chessapp-290922',
-  credentials: creds,
+  keyFilename: 'keyfile.json',
 });
 /*
 const docRef = db.collection('users').doc('alovelace');
