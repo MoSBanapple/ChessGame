@@ -9,6 +9,7 @@ var app = express();
 var server = http.Server(app);
 var io = socketIO(server);
 //const admin = require('firebase-admin');
+var fs = require('fs');
 
 var port = process.env.PORT || 3000;
 
@@ -18,6 +19,7 @@ app.use(express.static(path.join(__dirname, 'build')));
 //console.log(process.env.GOOGLE_APPLICATION_CREDENTIALS);
 let creds = JSON.parse(process.env.FIRESTORE_CREDENTIALS);
 console.log(creds);
+fs.writeFile("keyfile.json", JSON.stringify(creds));
 const db = new Firestore({
   projectId: 'chessapp-290922',
   keyFilename: 'keyfile.json',
