@@ -13,7 +13,7 @@ var port = process.env.PORT || 3000;
 
 app.set('port', port);
 app.use(express.static(path.join(__dirname, 'build')));
-
+console.log(process.env.GOOGLE_APPLICATION_CREDENTIALS);
 const db = new Firestore({
   projectId: 'chessapp-290922',
   keyFilename: 'keyfile.json',
