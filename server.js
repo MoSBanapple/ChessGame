@@ -8,16 +8,21 @@ const Firestore = require('@google-cloud/firestore');
 var app = express();
 var server = http.Server(app);
 var io = socketIO(server);
+//const admin = require('firebase-admin');
 
 var port = process.env.PORT || 3000;
 
 app.set('port', port);
 app.use(express.static(path.join(__dirname, 'build')));
-console.log("yeah");
-console.log(process.env.GOOGLE_APPLICATION_CREDENTIALS);
+//console.log("yeah");
+//console.log(process.env.GOOGLE_APPLICATION_CREDENTIALS);
+let creds = {
+	"private_key": process.env.FIREBASE_PRIVATE_KEY,
+	"client_email": process.env.FIREBASE_CLIENT_EMAIL,
+}
 const db = new Firestore({
   projectId: 'chessapp-290922',
-  keyFilename: 'keyfile.json',
+  credentials: creds,
 });
 /*
 const docRef = db.collection('users').doc('alovelace');
