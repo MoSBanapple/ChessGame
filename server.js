@@ -19,7 +19,9 @@ app.use(express.static(path.join(__dirname, 'build')));
 //console.log(process.env.GOOGLE_APPLICATION_CREDENTIALS);
 let creds = JSON.parse(process.env.FIRESTORE_CREDENTIALS);
 console.log(creds);
-fs.writeFile("keyfile.json", JSON.stringify(creds));
+fs.writeFile("keyfile.json", JSON.stringify(creds), function(err, result) {
+     if(err) console.log('error', err);
+   });
 const db = new Firestore({
   projectId: 'chessapp-290922',
   keyFilename: 'keyfile.json',
